@@ -26,6 +26,46 @@ languageRoute.post('/lang', async (req: Request, res: Response) => {
   }
 });
 
+languageRoute.put('/langput/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { languagename, languagecode } = req.body;
+
+  try {
+    const languageToUpdate = await Language.findByPk(id);
+
+    if (!languageToUpdate) {
+      return res.status(404).json({ error: 'Language not found' });
+    }
+
+    languageToUpdate.languagename = languagename;
+    languageToUpdate.languagecode = languagecode;
+    
+    await languageToUpdate.save();
+    res.json(languageToUpdate);
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+});
+
+languageRoute.delete('/langdel/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const languageToDelete = await Language.findByPk(id);
+
+    if (!languageToDelete) {
+      return res.status(404).json({ error: 'Language not found' });
+    }
+
+    await languageToDelete.destroy();
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+});
+
+
+
 
 
 export default languageRoute;
